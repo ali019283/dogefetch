@@ -7,7 +7,6 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
-FILE *fptr;
 int get_comp(){
 	char str[60];
 	FILE *fptr=fopen("/sys/devices/virtual/dmi/id/product_version", "r");
