@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE        (60)
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -16,13 +17,13 @@ int get_comp(){
 
         /* Some machines may lack this file */
         if(access(filename, F_OK) == 0) {
-                char str[60];
+                char str[BUFFER_SIZE];
                 FILE *fptr = fopen(filename, "r");
-                fgets(str, 60, fptr);
+                fgets(str, BUFFER_SIZE, fptr);
                 printf(ANSI_COLOR_CYAN     "  __      _      %s", str);
                 fclose(fptr);
         } else { // Very cheap workaround
-                char str[60];
+                char str[BUFFER_SIZE];
                 memcpy(str, "Unknown hardware", 60);
                 printf(ANSI_COLOR_CYAN     "  __      _      %s\n", str);
         }
@@ -33,41 +34,48 @@ int get_comp(){
 int get_cpu(){
 	int num = 0;
 	FILE *fptr=fopen("/proc/cpuinfo", "r");
-	char str[60];
+	char str[BUFFER_SIZE];
 	while( num < 5){
 		num=num+1;
-		fgets(str,60,fptr);
+		fgets(str,BUFFER_SIZE,fptr);
 	}
 	fclose(fptr);
 	printf(ANSI_COLOR_BLUE     "o'')}____//      %s", &str[13]);
 	return 0;
 }
 
-int get_dist(){
-	char str[60];
-	int num = 0;
-	FILE *fptr=fopen("/etc/os-release", "r");
-	while (num < 3){
-		num=num+1;
-		fgets(str, 60, fptr);
-	}
-	fclose(fptr);
-	int i = 0;
-	for (; str[i] != '\0'; i++);
-	str[i-2] = 0;
-	printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", &str[13]);
-	return 0;
-	
+int get_dist() {
+	FILE *fptr = fopen("/etc/os-release", "r");
+
+        // FIXME: Error handling
+        if (!fptr) return -1;
+
+        char str[BUFFER_SIZE];
+
+        // Locating a line containing the PRETTY_NAME field
+        while (strstr(str, "PRETTY_NAME") == NULL)
+                fgets(str, BUFFER_SIZE, fptr);
+
+        fclose(fptr);
+
+        // FIXME: Maybe put this into its own function?
+        int i = 0;
+        for (; str[i] != '\0'; i++);
+        str[i-2] = 0;
+
+        printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", &str[13]);
+
+        return 0;
 }
 
 int get_mem_total(){
-	char str[60];
+	char str[BUFFER_SIZE];
 	int num = 0;
 	FILE *fptr=fopen("/proc/meminfo", "r");
-	fgets(str,60,fptr);
-	char str1[60];
-	fgets(str1,60,fptr);
-	fgets(str1,60,fptr);
+	fgets(str,BUFFER_SIZE,fptr);
+	char str1[BUFFER_SIZE];
+	fgets(str1,BUFFER_SIZE,fptr);
+	fgets(str1,BUFFER_SIZE,fptr);
 	int i = 0;
 	for (; str[i] != '\0'; i++);
 	str[i-7] = 0;
