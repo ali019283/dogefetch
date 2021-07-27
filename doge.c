@@ -11,7 +11,7 @@ int get_comp(){
 	char str[60];
 	FILE *fptr=fopen("/sys/devices/virtual/dmi/id/product_version", "r");
 	fgets(str,60,fptr);
-	printf(ANSI_COLOR_CYAN     "\n      %s \n", str);
+	printf(ANSI_COLOR_CYAN     "  __      _      %s", str);
 	fclose(fptr);
 	return 0;
 }
@@ -25,7 +25,7 @@ int get_cpu(){
 		fgets(str,60,fptr);
 	}
 	fclose(fptr);
-	printf(ANSI_COLOR_BLUE     "      %s \n", &str[13]);
+	printf(ANSI_COLOR_BLUE     "o'')}____//      %s", &str[13]);
 	return 0;
 }
 
@@ -41,7 +41,7 @@ int get_dist(){
 	int i = 0;
 	for (; str[i] != '\0'; i++);
 	str[i-2] = 0;
-	printf(ANSI_COLOR_YELLOW     "      %s \n \n", &str[13]);
+	printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", &str[13]);
 	return 0;
 	
 }
@@ -67,7 +67,7 @@ int get_mem_total(){
 	long ret;
 	ret = strtol(&str[17], &ptr, 10);
 	ret1=ret-ret1;
-	printf(ANSI_COLOR_GREEN    "   ﳔ   %ld MB/%ld MB \n \n", ret1, ret);
+	printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", ret1, ret);
 	return 0;
 }
 
@@ -76,7 +76,7 @@ int main (int argc, char const *argv[]) {
 	get_comp();
 	get_cpu();
 	get_dist();
-//	get_mem();
 	get_mem_total();
+	printf(ANSI_COLOR_GREEN    "              very" ANSI_COLOR_MAGENTA " doge" ANSI_COLOR_CYAN " much" ANSI_COLOR_YELLOW " wow" ANSI_COLOR_RESET "\n");
 	return 0;
 }
