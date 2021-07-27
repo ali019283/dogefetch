@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -7,13 +10,24 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
+
 int get_comp(){
-	char str[60];
-	FILE *fptr=fopen("/sys/devices/virtual/dmi/id/product_version", "r");
-	fgets(str,60,fptr);
-	printf(ANSI_COLOR_CYAN     "  __      _      %s", str);
-	fclose(fptr);
-	return 0;
+        char *filename = "/sys/devices/virtual/dmi/id/product_version";
+
+        /* Some machines may lack this file */
+        if(access(filename, F_OK) == 0) {
+                char str[60];
+                FILE *fptr = fopen(filename, "r");
+                fgets(str, 60, fptr);
+                printf(ANSI_COLOR_CYAN     "  __      _      %s", str);
+                fclose(fptr);
+        } else { // Very cheap workaround
+                char str[60];
+                memcpy(str, "Unknown hardware", 60);
+                printf(ANSI_COLOR_CYAN     "  __      _      %s\n", str);
+        }
+
+        return 0;
 }
 
 int get_cpu(){
