@@ -24,7 +24,7 @@ int get_comp(){
                 fclose(fptr);
         } else { // Very cheap workaround
                 char str[BUFFER_SIZE];
-                memcpy(str, "Unknown hardware", 60);
+                memcpy(str, "Unknown hardware", 17);
                 printf(ANSI_COLOR_CYAN     "  __      _      %s\n", str);
         }
 
