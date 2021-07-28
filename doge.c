@@ -69,30 +69,25 @@ int get_dist() {
 }
 
 int get_mem_total(){
-	char str[BUFFER_SIZE];
-	int num = 0;
+	char mem_total_buffer[BUFFER_SIZE];
+	char mem_available_buffer[BUFFER_SIZE];
 	FILE *fptr=fopen("/proc/meminfo", "r");
-	fgets(str,BUFFER_SIZE,fptr);
-	char str1[BUFFER_SIZE];
-	fgets(str1,BUFFER_SIZE,fptr);
-	fgets(str1,BUFFER_SIZE,fptr);
-	int i = 0;
-	for (; str[i] != '\0'; i++);
-	str[i-7] = 0;
-	int a = 0;
-	for (; str1[a] != '\0'; a++);
-	str1[a-7] = 0;
-	char *ptr1;
-	long ret1;
-	ret1 = strtol(&str1[17], &ptr1, 10);
-	char *ptr;
-	long ret;
-	ret = strtol(&str[17], &ptr, 10);
-	ret1=ret-ret1;
-	printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", ret1, ret);
-	return 0;
-}
+    // MemTotal:
+	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
+    // MemFree:
+	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
+    // MemAvailable:
+	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
+    // MemTotal:
+    strtok(mem_available_buffer, " ");
+    long mem_total = atol(strtok(NULL, " ")) / 1000;
+    strtok(mem_available_buffer, " ");
+    long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
 
+	printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", 
+            mem_used, mem_total);
+    return 0;
+}
 
 int main (int argc, char const *argv[]) {
 	get_comp();
