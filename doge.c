@@ -12,6 +12,12 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+inline void terminator(char *str) {
+    int i = 0;
+    while(str[i++]);
+    str[i-2] = 0;
+}
+
 int get_comp(){
         char *filename = "/sys/devices/virtual/dmi/id/product_version";
 
@@ -24,7 +30,7 @@ int get_comp(){
                 fclose(fptr);
         } else { // Very cheap workaround
                 char str[BUFFER_SIZE];
-                memcpy(str, "Unknown hardware", 60);
+                memcpy(str, "Unknown hardware", 17);
                 printf(ANSI_COLOR_CYAN     "  __      _      %s\n", str);
         }
 
@@ -57,11 +63,7 @@ int get_dist() {
                 fgets(str, BUFFER_SIZE, fptr);
 
         fclose(fptr);
-
-        // FIXME: Maybe put this into its own function?
-        int i = 0;
-        for (; str[i] != '\0'; i++);
-        str[i-2] = 0;
+        terminator(str);
 
         printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", &str[13]);
 
