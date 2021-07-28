@@ -47,68 +47,64 @@ int get_comp(){
 }
 
 int get_cpu(){
-	int num = 0;
-	FILE *fptr=fopen("/proc/cpuinfo", "r");
-	char str[BUFFER_SIZE];
-	while( num < 5){
-		num=num+1;
-		fgets(str,BUFFER_SIZE,fptr);
-	}
-	fclose(fptr);
-	printf(ANSI_COLOR_BLUE     "o'')}____//      %s", &str[13]);
-	return 0;
+        int num = 0;
+        FILE *fptr=fopen("/proc/cpuinfo", "r");
+        char str[BUFFER_SIZE];
+        while( num < 5){
+                num=num+1;
+                fgets(str,BUFFER_SIZE,fptr);
+        }
+        fclose(fptr);
+        printf(ANSI_COLOR_BLUE     "o'')}____//      %s", &str[13]);
+        return 0;
 }
 
 int get_dist() {
-	FILE *fptr = fopen("/etc/os-release", "r");
+        FILE *fptr = fopen("/etc/os-release", "r");
 
         // FIXME: Error handling
         if (!fptr) return -1;
 
         char str[BUFFER_SIZE];
+        char* distro;
 
         // Locating a line containing the PRETTY_NAME field
         while (strstr(str, "PRETTY_NAME") == NULL)
                 fgets(str, BUFFER_SIZE, fptr);
-
         fclose(fptr);
 
-        // FIXME: Maybe put this into its own function?
-        int i = 0;
-        for (; str[i] != '\0'; i++);
-        str[i-2] = 0;
-
-        printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", &str[13]);
-
+        strtok(str, "=\"");
+        distro = strtok(NULL, "=\"");
+        printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", distro);
         return 0;
 }
 
 int get_mem_total(){
-	char mem_total_buffer[BUFFER_SIZE];
-	char mem_available_buffer[BUFFER_SIZE];
-	FILE *fptr=fopen("/proc/meminfo", "r");
-    // MemTotal:
-	fgets(mem_total_buffer,BUFFER_SIZE,fptr);
-    // MemFree:
-	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
-    // MemAvailable:
-	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
-    // MemTotal:
-    strtok(mem_total_buffer, " ");
-    long mem_total = atol(strtok(NULL, " ")) / 1000;
-    strtok(mem_available_buffer, " ");
-    long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
+        char mem_total_buffer[BUFFER_SIZE];
+        char mem_available_buffer[BUFFER_SIZE];
+        FILE *fptr=fopen("/proc/meminfo", "r");
 
-	printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", 
-            mem_used, mem_total);
-    return 0;
+        while(strstr(mem_total_buffer, "MemTotal:") == NULL)
+                fgets(mem_total_buffer, BUFFER_SIZE, fptr);
+        while(strstr(mem_available_buffer, "MemAvailable:") == NULL)
+                fgets(mem_available_buffer, BUFFER_SIZE, fptr);
+        fclose(fptr);
+
+        strtok(mem_total_buffer, " ");
+        long mem_total = atol(strtok(NULL, " ")) / 1000;
+        strtok(mem_available_buffer, " ");
+        long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
+
+        printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", 
+                mem_used, mem_total);
+        return 0;
 }
 
 int main (int argc, char const *argv[]) {
-	get_comp();
-	get_cpu();
-	get_dist();
-	get_mem_total();
-	printf(ANSI_COLOR_GREEN    "              very" ANSI_COLOR_MAGENTA " doge" ANSI_COLOR_CYAN " much" ANSI_COLOR_YELLOW " wow" ANSI_COLOR_RESET "\n");
-	return 0;
+        get_comp();
+        get_cpu();
+        get_dist();
+        get_mem_total();
+        printf(ANSI_COLOR_GREEN    "              very" ANSI_COLOR_MAGENTA " doge" ANSI_COLOR_CYAN " much" ANSI_COLOR_YELLOW " wow" ANSI_COLOR_RESET "\n");
+        return 0;
 }
