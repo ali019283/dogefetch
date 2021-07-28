@@ -3,6 +3,10 @@ dogefetch, a project made in C for doges, very project, much wow.
 
 ![alt text](https://i.imgur.com/rZZKiB7.png)
 
+# before installing
+this project uses nerd fonts, please install it to see the icons.
+https://github.com/ryanoasis/nerd-fonts
+
 # compiling & installing
 compile
 ```
