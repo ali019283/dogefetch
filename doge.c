@@ -73,13 +73,13 @@ int get_mem_total(){
 	char mem_available_buffer[BUFFER_SIZE];
 	FILE *fptr=fopen("/proc/meminfo", "r");
     // MemTotal:
-	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
+	fgets(mem_total_buffer,BUFFER_SIZE,fptr);
     // MemFree:
 	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
     // MemAvailable:
 	fgets(mem_available_buffer,BUFFER_SIZE,fptr);
     // MemTotal:
-    strtok(mem_available_buffer, " ");
+    strtok(mem_total_buffer, " ");
     long mem_total = atol(strtok(NULL, " ")) / 1000;
     strtok(mem_available_buffer, " ");
     long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
