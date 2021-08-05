@@ -103,7 +103,7 @@ int get_mem_total(){
 int main (int argc, char const *argv[]) {
 	FILE *fptr;
 	char c, str[BUFFER_SIZE];
-	fptr = fopen("/usr/share/dogefetch/doggo", "r");
+	fptr = fopen("/usr/local/share/dogefetch/doggo", "r");
 	c = fgetc(fptr);
 	for (int i = 0; i < argc ; i++){
 		if (strcmp(argv[i], "--doggo-color=yellow") == 0){
