@@ -8,6 +8,8 @@ all:
 	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
 
 install: all
+	mkdir /usr/share/dogefetch
+	cp doggo /usr/share/dogefetch/doggo
 	cp $(EXECUTABLE) $(PREFIX)/
 
 uninstall:
