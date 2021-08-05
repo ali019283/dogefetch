@@ -5,18 +5,18 @@ EXECUTABLE=dogefetch
 PREFIX=/usr/local
 
 all:
-        $(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
+	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
 
 install: all
-        mkdir -p $(PREFIX)/share/dogefetch $(PREFIX)/bin/
-        cp doggo $(PREFIX)/share/dogefetch/doggo
-        cp $(EXECUTABLE) $(PREFIX)/bin/
+	mkdir -p $(PREFIX)/share/dogefetch $(PREFIX)/bin/
+	cp doggo $(PREFIX)/share/dogefetch/doggo
+	cp $(EXECUTABLE) $(PREFIX)/bin/
 
 uninstall:
-        rm -f $(PREFIX)/bin/$(EXECUTABLE)
+	rm -f $(PREFIX)/bin/$(EXECUTABLE)
 
 run: all
-        ./$(EXECUTABLE)
+	./$(EXECUTABLE)
 
 clean: $(EXECUTABLE)
-        rm -f $(EXECUTABLE)
+	rm -f $(EXECUTABLE)
