@@ -35,12 +35,12 @@ int get_comp(){
                 char str[BUFFER_SIZE];
                 FILE *fptr = fopen(filename, "r");
                 fgets(str, BUFFER_SIZE, fptr);
-                printf(ANSI_COLOR_CYAN     "  __      _      %s", str);
+                printf(ANSI_COLOR_CYAN     "   %s", str);
                 fclose(fptr);
         } else { // Very cheap workaround
                 char str[BUFFER_SIZE];
                 memcpy(str, "Unknown hardware", 17);
-                printf(ANSI_COLOR_CYAN     "  __      _      %s\n", str);
+                printf(ANSI_COLOR_CYAN     "   %s\n", str);
         }
 
         return 0;
@@ -55,7 +55,7 @@ int get_cpu(){
                 fgets(str,BUFFER_SIZE,fptr);
         }
         fclose(fptr);
-        printf(ANSI_COLOR_BLUE     "o'')}____//      %s", &str[13]);
+        printf(ANSI_COLOR_BLUE      "   %s", &str[13]);
         return 0;
 }
 
@@ -75,7 +75,7 @@ int get_dist() {
 
         strtok(str, "=\"");
         distro = strtok(NULL, "=\"");
-        printf(ANSI_COLOR_YELLOW     " `_/      )      %s \n", distro);
+        printf(ANSI_COLOR_YELLOW     "   %s \n", distro);
         return 0;
 }
 
@@ -95,16 +95,60 @@ int get_mem_total(){
         strtok(mem_available_buffer, " ");
         long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
 
-        printf(ANSI_COLOR_GREEN    " (_(_/-(_/    ﳔ   %ld MB/%ld MB \n", 
+        printf(ANSI_COLOR_GREEN    "ﳔ   %ld MB/%ld MB \n", 
                 mem_used, mem_total);
         return 0;
 }
 
 int main (int argc, char const *argv[]) {
-        get_comp();
-        get_cpu();
-        get_dist();
+	FILE *fptr;
+	char c, str[BUFFER_SIZE];
+	fptr = fopen("/usr/share/dogefetch/doggo", "r");
+	c = fgetc(fptr);
+	for (int i = 0; i < argc ; i++){
+		if (strcmp(argv[i], "--doggo-color=yellow") == 0){
+			while (c != EOF){
+				printf (ANSI_COLOR_YELLOW "%c",c);
+				c = fgetc(fptr);
+			}
+		}else if (strcmp(argv[i], "--doggo-color=green") == 0){
+			while (c != EOF){
+				printf (ANSI_COLOR_GREEN "%c",c);
+				c = fgetc(fptr);
+			}
+		
+		}else if (strcmp(argv[i], "--doggo-color=red") == 0){
+			while (c != EOF){
+				printf (ANSI_COLOR_RED "%c",c);
+				c = fgetc(fptr);
+			}
+
+		}
+		else if (strcmp(argv[i], "--help") == 0){
+			printf(ANSI_COLOR_CYAN "no u \n");
+			return 0;
+		}
+		else if (argc < 2){
+			fgets(str, BUFFER_SIZE, fptr);
+			printf(ANSI_COLOR_CYAN " %s", str);
+			fgets(str, BUFFER_SIZE, fptr);
+			printf(ANSI_COLOR_BLUE "%s", str);
+			fgets(str, BUFFER_SIZE, fptr);
+			printf(ANSI_COLOR_YELLOW "%s", str);
+			fgets(str, BUFFER_SIZE, fptr);
+			printf(ANSI_COLOR_GREEN "%s", str);
+		}
+	}
+	fclose(fptr);
+	printf("[4A");
+	printf("[9999999D");
+	printf("[13C");
+	get_comp();
+	printf("[13C");
+	get_cpu();
+        printf("[13C");
+	get_dist();
+	printf("[13C");
         get_mem_total();
-        printf(ANSI_COLOR_GREEN    "              very" ANSI_COLOR_MAGENTA " doge" ANSI_COLOR_CYAN " much" ANSI_COLOR_YELLOW " wow" ANSI_COLOR_RESET "\n");
         return 0;
 }
