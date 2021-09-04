@@ -28,7 +28,7 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 #ifndef INSTALL_PREFIX
-#define INSTALL_PREFIX "/usr"
+#define INSTALL_PREFIX "/usr/local"
 #endif
 
 int get_comp(){
