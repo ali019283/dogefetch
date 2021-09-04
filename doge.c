@@ -27,6 +27,10 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+#ifndef INSTALL_PREFIX
+#define INSTALL_PREFIX "/usr"
+#endif
+
 int get_comp(){
         char *filename = "/sys/devices/virtual/dmi/id/product_version";
 
@@ -103,8 +107,10 @@ int get_mem_total(){
 int main (int argc, char const *argv[]) {
 	FILE *fptr;
 	char c, str[BUFFER_SIZE];
-	fptr = fopen("/usr/local/share/dogefetch/doggo", "r");
+
+	fptr = fopen(INSTALL_PREFIX"/share/dogefetch/doggo", "r");
 	c = fgetc(fptr);
+
 	for (int i = 0; i < argc ; i++){
 		if (strcmp(argv[i], "--doggo-color=yellow") == 0){
 			while (c != EOF){
@@ -124,10 +130,6 @@ int main (int argc, char const *argv[]) {
 			}
 
 		}
-		else if (strcmp(argv[i], "--help") == 0){
-			printf(ANSI_COLOR_CYAN "no u \n");
-			return 0;
-		}
 		else if (argc < 2){
 			fgets(str, BUFFER_SIZE, fptr);
 			printf(ANSI_COLOR_CYAN " %s", str);
@@ -139,16 +141,18 @@ int main (int argc, char const *argv[]) {
 			printf(ANSI_COLOR_GREEN "%s", str);
 		}
 	}
+
 	fclose(fptr);
 	printf("[4A");
 	printf("[9999999D");
 	printf("[13C");
 	get_comp();
-	printf("[13C");
-	get_cpu();
-        printf("[13C");
-	get_dist();
-	printf("[13C");
-        get_mem_total();
-        return 0;
+    printf("[13C");
+    get_cpu();
+    printf("[13C");
+    get_dist();
+    printf("[13C");
+    get_mem_total();
+
+    return 0;
 }

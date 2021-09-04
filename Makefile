@@ -1,22 +1,13 @@
-CC=cc
 SOURCES=doge.c
-CFLAGS=-O2
 EXECUTABLE=dogefetch
-PREFIX=/usr/local
+PREFIX=/usr
+
+CFLAGS += -O2
 
 all:
-	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
+	$(CC) $(SOURCES) $(CFLAGS) -DINSTALL_PREFIX=\"$(PREFIX)\" -o $(EXECUTABLE)
 
 install: all
-	mkdir -p /usr/local/share/dogefetch $(PREFIX)/bin/
-	cp doggo /usr/local/share/dogefetch/doggo
-	cp $(EXECUTABLE) $(PREFIX)/bin/
-
-uninstall:
-	rm -f $(PREFIX)/bin/$(EXECUTABLE)
-	rm -r /usr/local/share/dogefetch
-run: all
-	./$(EXECUTABLE)
-
-clean: $(EXECUTABLE)
-	rm -f $(EXECUTABLE)
+	mkdir -p $(DESTDIR)$(PREFIX)/share/dogefetch $(DESTDIR)$(PREFIX)/bin
+	cp doggo $(DESTDIR)$(PREFIX)/share/dogefetch/doggo
+	cp $(EXECUTABLE) $(DESTDIR)$(PREFIX)/bin
