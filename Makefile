@@ -1,6 +1,6 @@
 SOURCES=doge.c
 EXECUTABLE=dogefetch
-PREFIX=/usr
+PREFIX=/usr/local
 
 CFLAGS += -O2
 
