@@ -63,6 +63,56 @@ int get_cpu(){
         return 0;
 }
 
+int get_pkg_count() {
+        /*
+                Identify the package manager
+
+        */
+        // Copied from get_dist()
+
+        FILE *fptr = fopen("/etc/os-release", "r");
+
+        // FIXME: Error handling
+        if (!fptr) return -1;
+
+        char str[BUFFER_SIZE];
+        char* distro;
+        char* pkgcount_command;
+        // FILE *pkgcount_command_fptr;
+        // Locating a line containing the PRETTY_NAME field
+        while (strstr(str, "PRETTY_NAME") == NULL)
+                fgets(str, BUFFER_SIZE, fptr);
+        fclose(fptr);
+
+        strtok(str, "=\"");
+        distro = strtok(NULL, "=\"");
+
+        if(strstr(distro, "Raspbian") || strstr(distro, "Debian")  || strstr(distro, "Ubuntu")  || strstr(distro, "ubuntu") || strstr(distro, "MX") ) {  // Debian base support (which uses apt)
+                // I additionally added "ubuntu" to identify Xubuntu Lubuntu etc.
+                pkgcount_command = "echo \"$(dpkg-query -f '.\n' -W | wc --lines) packages\"";
+        }
+
+        if(strstr(distro, "Arch") || strstr(distro, "Artix") || strstr(distro, "Manjaro") || strstr(distro, "Endeavour") || strstr(distro, "Garuda") ) {
+                pkgcount_command = "echo \"$(pacman -Qq --color never) packages\"", "r";
+        }
+
+
+        char line[128];
+
+        FILE *pkgcount_command_fptr = popen(pkgcount_command, "r");
+        if (pkgcount_command_fptr) {
+           while (fgets(line, sizeof line, pkgcount_command_fptr)) {
+                fscanf(pkgcount_command_fptr,"", line);
+                printf(ANSI_COLOR_YELLOW     "\uf8d5  \uf178 %s  \n", line);
+           }
+           pclose(pkgcount_command_fptr);
+        }
+
+        // printf(ANSI_COLOR_YELLOW     "\uf8d5  \uf178 %s \n", pkgcount_command);
+        return 0;
+}
+
+
 int get_dist() {
         FILE *fptr = fopen("/etc/os-release", "r");
 
@@ -147,12 +197,15 @@ int main (int argc, char const *argv[]) {
 	printf("[9999999D");
 	printf("[13C");
 	get_comp();
-    printf("[13C");
+    printf("\t\t");
     get_cpu();
-    printf("[13C");
+    printf("\t\t");
     get_dist();
-    printf("[13C");
+    printf("\t\t");
     get_mem_total();
+    printf("\t\t");
+    get_pkg_count();
+
 
     return 0;
 }
