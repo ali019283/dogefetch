@@ -89,11 +89,11 @@ int get_pkg_count() {
 
         if(strstr(distro, "Raspbian") || strstr(distro, "Debian")  || strstr(distro, "Ubuntu")  || strstr(distro, "ubuntu") || strstr(distro, "MX") ) {  // Debian base support (which uses apt)
                 // I additionally added "ubuntu" to identify Xubuntu Lubuntu etc.
-                pkgcount_command = "echo \"$(dpkg-query -f '.\n' -W | wc --lines) packages\"";
+                pkgcount_command = "echo \"$(dpkg-query -f '.\n' -W | wc -l) packages\"";
         }
 
         if(strstr(distro, "Arch") || strstr(distro, "Artix") || strstr(distro, "Manjaro") || strstr(distro, "Endeavour") || strstr(distro, "Garuda") ) {
-                pkgcount_command = "echo \"$(pacman -Qq --color never) packages\"", "r";
+                pkgcount_command = "echo \"$(pacman -Qq --color never | wc -l) packages\"", "r";
         }
 
 
