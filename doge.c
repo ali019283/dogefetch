@@ -99,7 +99,7 @@ int get_mem_total(){
         strtok(mem_available_buffer, " ");
         long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
 
-        printf(ANSI_COLOR_GREEN    "ﳔ   %ld MB/%ld MB \n", 
+        printf(ANSI_COLOR_GREEN    "ﳔ   %ld MB/%ld MB \n" ANSI_COLOR_RESET, 
                 mem_used, mem_total);
         return 0;
 }
