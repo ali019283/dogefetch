@@ -11,7 +11,6 @@ dogefetch, a project made in C for doges, very project, much wow.
 | -> red            Make doge ascii color red                       |
 | -> green          Make doge ascii color green                     |
 +-------------------------------------------------------------------+
-
 ```
 
 # before installing
