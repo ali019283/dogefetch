@@ -8,6 +8,5 @@ all:
 	$(CC) $(SOURCES) $(CFLAGS) -DINSTALL_PREFIX=\"$(PREFIX)\" -o $(EXECUTABLE)
 
 install: all
-	mkdir -p $(DESTDIR)$(PREFIX)/share/dogefetch $(DESTDIR)$(PREFIX)/bin
-	cp doggo $(DESTDIR)$(PREFIX)/share/dogefetch/doggo
-	cp $(EXECUTABLE) $(DESTDIR)$(PREFIX)/bin
+	install -D doggo $(DESTDIR)$(PREFIX)/share/dogefetch/doggo
+	install -D $(EXECUTABLE) $(DESTDIR)$(PREFIX)/bin
