@@ -9,4 +9,4 @@ all:
 
 install: all
 	install -D doggo $(DESTDIR)$(PREFIX)/share/dogefetch/doggo
-	install -D $(EXECUTABLE) $(DESTDIR)$(PREFIX)/bin
+	install -D $(EXECUTABLE) $(DESTDIR)$(PREFIX)/bin/dogefetch
