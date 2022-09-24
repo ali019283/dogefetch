@@ -39,12 +39,12 @@ int get_comp(){
                 char str[BUFFER_SIZE];
                 FILE *fptr = fopen(filename, "r");
                 fgets(str, BUFFER_SIZE, fptr);
-                printf(ANSI_COLOR_CYAN     "   %s", str);
+                printf(ANSI_COLOR_RED "├"ANSI_COLOR_CYAN     "   ➜ %s", str);
                 fclose(fptr);
         } else { // Very cheap workaround
                 char str[BUFFER_SIZE];
                 memcpy(str, "Unknown hardware", 17);
-                printf(ANSI_COLOR_CYAN     "   %s\n", str);
+                printf(ANSI_COLOR_GREEN     "├   ➜ %s\n", str);
         }
 
         return 0;
@@ -59,7 +59,7 @@ int get_cpu(){
                 fgets(str,BUFFER_SIZE,fptr);
         }
         fclose(fptr);
-        printf(ANSI_COLOR_BLUE      "   %s", &str[13]);
+        printf(ANSI_COLOR_RED "├"ANSI_COLOR_BLUE      "   ➜ %s", &str[13]);
         return 0;
 }
 
@@ -76,10 +76,9 @@ int get_dist() {
         while (strstr(str, "PRETTY_NAME") == NULL)
                 fgets(str, BUFFER_SIZE, fptr);
         fclose(fptr);
-
         strtok(str, "=\"");
         distro = strtok(NULL, "=\"");
-        printf(ANSI_COLOR_YELLOW     "   %s \n", distro);
+        printf(ANSI_COLOR_RED "├" ANSI_COLOR_YELLOW     "   ➜ %s \n", distro);
         return 0;
 }
 
@@ -99,9 +98,47 @@ int get_mem_total(){
         strtok(mem_available_buffer, " ");
         long mem_used = (mem_total - (atol(strtok(NULL, " ")) / 1000));
 
-        printf(ANSI_COLOR_GREEN    "ﳔ   %ld MB/%ld MB \n" ANSI_COLOR_RESET, 
-                mem_used, mem_total);
+        printf(ANSI_COLOR_RED"├"ANSI_COLOR_GREEN    " ﳔ  ➜ %ld MB/%ld MB \n",  mem_used, mem_total);
         return 0;
+}
+
+int pack(){
+        FILE *fptr = fopen("/etc/os-release", "r");
+
+        // FIXME: Error handling
+        if (!fptr) return -1;
+
+        char str[BUFFER_SIZE];
+        char* dist;
+
+        // Locating a line containing the PRETTY_NAME field
+        while (strstr(str, "ID") == NULL)
+                fgets(str, BUFFER_SIZE, fptr);
+        fclose(fptr);
+        strtok(str, "=\"");
+        dist = strtok(NULL, "=\"");
+        char *ret = strchr(dist, '\n');
+        *ret = '\0';
+        if(strcmp(dist, "arch") == 0){
+                int package_count = 0;
+                FILE * in = popen("pacman -Q", "r");
+                int c;
+                while ((c = fgetc(in)) != EOF) {
+                        if (c == '\n') package_count++;
+                }
+                printf(ANSI_COLOR_RED"└   ➜ %d\n" ANSI_COLOR_RESET, package_count);
+        } else{
+                printf(ANSI_COLOR_RED"└   ➜ Unknown Distro\n" ANSI_COLOR_RESET);
+        }
+        return 0;
+}
+
+int host_name(){
+        char hostname[60], *name;
+        gethostname(hostname, 60);
+        name=getlogin();
+        printf(ANSI_COLOR_RED"\x1b[1mPC ➜ %s@%s\n", name, hostname);
+        
 }
 
 int main (int argc, char const *argv[]) {
@@ -110,7 +147,6 @@ int main (int argc, char const *argv[]) {
 
 	fptr = fopen(INSTALL_PREFIX"/share/dogefetch/doggo", "r");
 	c = fgetc(fptr);
-
 	for (int i = 0; i < argc ; i++){
 		if (strcmp(argv[i], "--doggo-color=yellow") == 0){
 			while (c != EOF){
@@ -143,16 +179,20 @@ int main (int argc, char const *argv[]) {
 	}
 
 	fclose(fptr);
-	printf("[4A");
-	printf("[9999999D");
-	printf("[13C");
+	printf("\033[4A");
+	printf("\033[9999999D");
+        printf("\033[13C");
+        host_name();
+	printf("\033[13C");
 	get_comp();
-    printf("[13C");
-    get_cpu();
-    printf("[13C");
-    get_dist();
-    printf("[13C");
-    get_mem_total();
+        printf("\033[13C");
+        get_cpu();
+        printf("\033[13C");
+        get_dist();
+        printf("\033[13C");
+        get_mem_total();
+        printf("\033[13C");
+        pack();
 
     return 0;
 }
