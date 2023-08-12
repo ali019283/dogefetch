@@ -33,37 +33,26 @@
 #endif
 bool check_path(const char *cmd) {
     if(strchr(cmd, '/')) {
-        // if cmd includes a slash, no path search must be performed,
-        // go straight to checking if it's executable
         return access(cmd, X_OK)==0;
     }
     const char *path = getenv("PATH");
-    if(!path) return 1; // something is horribly wrong...
-    // we are sure we won't need a buffer any longer
+    if(!path) return 1;
     char *buf = malloc(strlen(path)+strlen(cmd)+3);
-    if(!buf) return 1; // actually useless, see comment
-    // loop as long as we have stuff to examine in path
+    if(!buf) return 1;
     for(; *path; ++path) {
-        // start from the beginning of the buffer
         char *p = buf;
-        // copy in buf the current path element
         for(; *path && *path!=':'; ++path,++p) {
             *p = *path;
         }
-        // empty path entries are treated like "."
         if(p==buf) *p++='.';
-        // slash and command name
         if(p[-1]!='/') *p++='/';
         strcpy(p, cmd);
-        // check if we can execute it
         if(access(buf, X_OK)==0) {
             free(buf);
             return 0;
         }
-        // quit at last cycle
         if(!*path) break;
     }
-    // not found
     free(buf);
     return 1;
 }
