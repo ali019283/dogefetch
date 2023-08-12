@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE        (60)
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -30,6 +31,42 @@
 #ifndef INSTALL_PREFIX
 #define INSTALL_PREFIX "/usr/local"
 #endif
+bool check_path(const char *cmd) {
+    if(strchr(cmd, '/')) {
+        // if cmd includes a slash, no path search must be performed,
+        // go straight to checking if it's executable
+        return access(cmd, X_OK)==0;
+    }
+    const char *path = getenv("PATH");
+    if(!path) return 1; // something is horribly wrong...
+    // we are sure we won't need a buffer any longer
+    char *buf = malloc(strlen(path)+strlen(cmd)+3);
+    if(!buf) return 1; // actually useless, see comment
+    // loop as long as we have stuff to examine in path
+    for(; *path; ++path) {
+        // start from the beginning of the buffer
+        char *p = buf;
+        // copy in buf the current path element
+        for(; *path && *path!=':'; ++path,++p) {
+            *p = *path;
+        }
+        // empty path entries are treated like "."
+        if(p==buf) *p++='.';
+        // slash and command name
+        if(p[-1]!='/') *p++='/';
+        strcpy(p, cmd);
+        // check if we can execute it
+        if(access(buf, X_OK)==0) {
+            free(buf);
+            return 0;
+        }
+        // quit at last cycle
+        if(!*path) break;
+    }
+    // not found
+    free(buf);
+    return 1;
+}
 
 int get_comp(){
         char *filename = "/sys/devices/virtual/dmi/id/product_version";
@@ -103,34 +140,30 @@ int get_mem_total(){
 }
 
 int pack(){
-        FILE *fptr = fopen("/etc/os-release", "r");
-
-        // FIXME: Error handling
-        if (!fptr) return -1;
-
-        char str[BUFFER_SIZE];
-        char* dist;
-
-        // Locating a line containing the PRETTY_NAME field
-        while (strstr(str, "ID") == NULL)
-                fgets(str, BUFFER_SIZE, fptr);
-        fclose(fptr);
-        strtok(str, "=\"");
-        dist = strtok(NULL, "=\"");
-        char *ret = strchr(dist, '\n');
-        *ret = '\0';
-        if(strcmp(dist, "arch") == 0){
-                int package_count = 0;
-                FILE * in = popen("pacman -Q", "r");
+        char *dists[] = {"dpkg", " -L", "pacman", " -Q"};
+        int package_count = 0;
+        char *str = NULL;
+        size_t len = 0;
+        for(int i = 0; i < (sizeof(dists) / sizeof(dists[0]))-1; i+=2){
+                if(check_path(dists[i])){continue;}
+                size_t newlen = strlen(dists[i]) + strlen(dists[i+1]);
+                if (!str || newlen > len) {
+                        str = realloc(str, newlen + 1);
+                        len = newlen;
+                }
+                memset(str, '\0', len + 1);
+                strcat(str, dists[i]);
+                strcat(str, dists[i+1]);
+                FILE * in = popen(str, "r");
                 int c;
                 while ((c = fgetc(in)) != EOF) {
                         if (c == '\n') package_count++;
                 }
                 printf(ANSI_COLOR_RED"└   ➜ %d\n" ANSI_COLOR_RESET, package_count);
-        } else{
-                printf(ANSI_COLOR_RED"└   ➜ Unknown Distro\n" ANSI_COLOR_RESET);
+                return 0;
         }
-        return 0;
+        printf(ANSI_COLOR_RED"└   ➜ Unknown Distro\n" ANSI_COLOR_RESET);
+        return 1;
 }
 
 int host_name(){
@@ -144,7 +177,6 @@ int host_name(){
 int main (int argc, char const *argv[]) {
 	FILE *fptr;
 	char c, str[BUFFER_SIZE];
-
 	fptr = fopen(INSTALL_PREFIX"/share/dogefetch/doggo", "r");
 	c = fgetc(fptr);
 	for (int i = 0; i < argc ; i++){

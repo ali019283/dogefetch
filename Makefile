@@ -1,7 +1,6 @@
 SOURCES=doge.c
 EXECUTABLE=dogefetch
 PREFIX=/usr/local
-
 CFLAGS += -O2
 
 all:
